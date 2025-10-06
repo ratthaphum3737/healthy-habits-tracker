@@ -1,6 +1,7 @@
 from flask import session, flash, redirect, url_for
 from .ConnectDatabase import connect
 import re
+
 def login_user(form):
     """ตรวจสอบการเข้าสู่ระบบ"""
     username = form["username"]
@@ -8,7 +9,11 @@ def login_user(form):
 
     cursor, conn = connect()
     cursor.execute(
-        "SELECT userid, name, password, weight, height, age, gender, goal, activity_level FROM user WHERE username=%s",
+        """
+        SELECT userid, name, password, weight, height, age, gender, goal, activity_level 
+        FROM "user" 
+        WHERE username=%s
+        """,
         (username,)
     )
     row = cursor.fetchone()
@@ -20,7 +25,7 @@ def login_user(form):
         session["height"] = float(row[4]) if row[4] else 0
         session["age"] = int(row[5]) if row[5] else 0
         session["gender"] = row[6]
-        session["goal"] = (row[7])
+        session["goal"] = row[7]
         session["activity_level"] = row[8]
         flash(f"ยินดีต้อนรับ {session['name']}", "success")
         next_page = "dashboard"
@@ -56,14 +61,14 @@ def register_user(form):
     cursor, conn = connect()
     try:
         cursor.execute("""
-            INSERT INTO user (name, weight, height, age, gender, goal, username, password, activity_level)
+            INSERT INTO "user" (name, weight, height, age, gender, goal, username, password, activity_level)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """, (name, weight, height, age, gender, goal, username, password, activity_level))
         conn.commit()
         flash("สมัครสมาชิกสำเร็จ — กรุณาเข้าสู่ระบบ", "success")
     except Exception as e:
         conn.rollback()
-        flash("ไม่สามารถสมัครสมาชิกได้ — username อาจซ้ำ หรือเกิดข้อผิดพลาด", "danger")
+        flash(f"ไม่สามารถสมัครสมาชิกได้ — {e}", "danger")
     finally:
         cursor.close()
         conn.close()
@@ -71,42 +76,46 @@ def register_user(form):
 
 def logout_user():
     """ออกจากระบบผู้ใช้"""
-    # ลบข้อมูลทั้งหมดใน session
     session.clear()
     flash("ออกจากระบบเรียบร้อยแล้ว", "info")
     return redirect(url_for("login"))
+
 
 def get_user_profile(userid):
     cursor, conn = connect()
     cursor.execute("""
         SELECT name, weight, height, age, gender, goal, username, activity_level 
-        FROM user WHERE userid = %s
+        FROM "user" 
+        WHERE userid = %s
     """, (userid,))
     user = cursor.fetchone()
     cursor.close()
     conn.close()
     return user
 
+
 def update_user_profile(userid, name, weight, height, age, gender, goal, username, activity_level):
     """อัปเดตข้อมูลผู้ใช้ โดยตรวจสอบ username"""
-    # --- ตรวจสอบรูปแบบ username ---
     if not re.match(r"^[A-Za-z0-9_]{3,20}$", username):
         flash("ชื่อผู้ใช้ต้องเป็นภาษาอังกฤษ (a-z, A-Z, 0-9, _) ความยาว 3-20 ตัวอักษร", "warning")
         return False
 
     cursor, conn = connect()
     try:
-        # --- ตรวจสอบว่า username ซ้ำกับคนอื่นหรือไม่ ---
-        cursor.execute("SELECT userid FROM user WHERE username = %s AND userid != %s", (username, userid))
+        # ตรวจสอบว่า username ซ้ำกับคนอื่นหรือไม่
+        cursor.execute(
+            'SELECT userid FROM "user" WHERE username = %s AND userid != %s',
+            (username, userid)
+        )
         if cursor.fetchone():
             flash("ชื่อผู้ใช้นี้ถูกใช้แล้ว กรุณาเลือกชื่ออื่น", "danger")
             cursor.close()
             conn.close()
             return False
 
-        # --- บันทึกการอัปเดตข้อมูล ---
+        # บันทึกการอัปเดตข้อมูล
         cursor.execute("""
-            UPDATE user 
+            UPDATE "user" 
             SET name=%s, weight=%s, height=%s, age=%s, gender=%s, goal=%s, username=%s, activity_level=%s
             WHERE userid=%s
         """, (name, weight, height, age, gender, goal, username, activity_level, userid))
