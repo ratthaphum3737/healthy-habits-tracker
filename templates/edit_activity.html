@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+      <h5>แก้ไขรายการกิจกรรม / อาหาร</h5>
+      <form method="post">
+        <!-- ประเภท -->
+        <div class="mb-3">
+          <label class="form-label">ประเภท</label>
+          <select class="form-select" name="activity_type" required>
+            <option value="eat" {% if act.activity_type == 'eat' %}selected{% endif %}>อาหาร</option>
+            <option value="exercise" {% if act.activity_type == 'exercise' %}selected{% endif %}>กิจกรรม</option>
+          </select>
+        </div>
+
+        <!-- ชื่อ -->
+        <div class="mb-3">
+          <label class="form-label">ชื่อ</label>
+          <input type="text" class="form-control" name="activity_name" value="{{ act.activity_name }}" required>
+        </div>
+
+        <!-- สารอาหาร -->
+        <div class="row">
+          <div class="col-md-2 mb-3">
+            <label class="form-label">แคลอรี่</label>
+            <input type="number" step="0.01" class="form-control" name="calories" value="{{ act.calories }}" required>
+          </div>
+          <div class="col-md-2 mb-3">
+            <label class="form-label">โปรตีน</label>
+            <input type="number" step="0.01" class="form-control" name="protein" value="{{ act.protein }}" required>
+          </div>
+          <div class="col-md-2 mb-3">
+            <label class="form-label">คาร์บ</label>
+            <input type="number" step="0.01" class="form-control" name="carbohydrate" value="{{ act.carbohydrate }}" required>
+          </div>
+          <div class="col-md-2 mb-3">
+            <label class="form-label">ไขมัน</label>
+            <input type="number" step="0.01" class="form-control" name="fat" value="{{ act.fat }}" required>
+          </div>
+        </div>
+
+        <!-- เวลา -->
+        <div class="mb-3">
+          <label class="form-label">เวลา</label>
+          <input type="datetime-local" class="form-control" name="activity_datetime" value="{{ act.activity_datetime }}" required>
+        </div>
+
+        <div class="mt-3">
+          <button type="submit" class="btn btn-primary">บันทึกการแก้ไข</button>
+          <a href="{{ url_for('manage_activity') }}" class="btn btn-secondary">ยกเลิก</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

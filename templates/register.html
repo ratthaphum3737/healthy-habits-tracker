@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4>สมัครสมาชิก</h4>
+        <form method="post">
+          <div class="mb-2">
+            <input class="form-control" name="name" required placeholder="ชื่อเต็ม">
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <input class="form-control" name="weight" required placeholder="น้ำหนัก (kg)" type="number" step="0.1">
+            </div>
+            <div class="col">
+              <input class="form-control" name="height" required placeholder="ความสูง (cm)" type="number" step="0.1">
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col">
+              <input class="form-control" name="age" required placeholder="อายุ" type="number">
+            </div>
+            <div class="col">
+              <select class="form-select" name="gender" required>
+                <option value="male">ชาย</option>
+                <option value="female">หญิง</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-2 mt-2">
+            <select class="form-select" name="goal" required>
+              <option value="">เลือกเป้าหมาย</option>
+              <option value="lose">ลดน้ำหนัก</option>
+              <option value="maintain">รักษาน้ำหนัก</option>
+              <option value="gain">เพิ่มน้ำหนัก</option>
+            </select>
+          </div>
+
+          <div class="mb-2">
+            <select class="form-select" name="activity_level" required>
+              <option value="">เลือกระดับการออกกำลังกาย</option>
+              <option value="1">1 - ไม่ค่อยออกกำลังกาย</option>
+              <option value="2">2 - ออกเล็กน้อย (1–3 วัน/สัปดาห์)</option>
+              <option value="3">3 - ออกปานกลาง (3–5 วัน/สัปดาห์)</option>
+              <option value="4">4 - ออกหนัก (6–7 วัน/สัปดาห์)</option>
+              <option value="5">5 - ออกหนักมาก (เช้า–เย็น / นักกีฬา)</option>
+            </select>
+          </div>
+
+          <div class="mb-2">
+            <input class="form-control" name="username" required placeholder="ชื่อผู้ใช้ (username)">
+          </div>
+
+          <div class="mb-3">
+            <input class="form-control" name="password" required placeholder="รหัสผ่าน" type="password">
+          </div>
+
+          <button class="btn btn-primary" type="submit">สมัครสมาชิก</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

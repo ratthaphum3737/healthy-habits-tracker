@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <h5 class="mb-3">แดชบอร์ด</h5>
+          <p>
+            <strong>BMI:</strong> {{ bmi|round(2) }}
+            &nbsp;|&nbsp; <strong>BMR:</strong> {{ bmr|round(0) }} kcal
+            &nbsp;|&nbsp; <strong>TDEE:</strong> {{ tdee|round(0) }} kcal
+          </p>
+          <div class="btn-group">
+            <a href="{{ url_for('add_food') }}" class="btn btn-outline-primary">เพิ่มอาหาร</a>
+            <a href="{{ url_for('add_exercise') }}" class="btn btn-outline-success">เพิ่มกิจกรรม</a>
+            <a href="{{ url_for('report') }}" class="btn btn-outline-secondary">ดูรายงาน</a>
+            <a href="{{ url_for('edit_profile') }}" class="btn btn-outline-primary">แก้ไขข้อมูลผู้ใช้</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="mb-3">ข้อมูลโปรไฟล์</h6>
+          <ul class="list-unstyled small mb-0">
+            <li>ชื่อ: {{ session.name }}</li>
+            <li>น้ำหนัก: {{ session.weight }} กก.</li>
+            <li>ส่วนสูง: {{ session.height }} ซม.</li>
+            <li>อายุ: {{ session.age }}</li>
+            <li>เพศ: {{ session.gender }}</li>
+            <li>
+              เป้าหมาย:
+              {% if session.goal|lower == 'lose' %}
+                ลดน้ำหนัก
+              {% elif session.goal|lower == 'maintain' %}
+                รักษาน้ำหนัก
+              {% elif session.goal|lower == 'gain' %}
+                เพิ่มน้ำหนัก
+              {% else %}
+                ไม่ระบุ
+              {% endif %}
+            </li>
+            <li>ระดับการออกกำลังกาย:
+              {% if session.activity_level|string == '1' %}
+                แทบไม่ออกกำลังกาย (ระดับ 1)
+              {% elif session.activity_level|string == '2' %}
+                ออกกำลังกายเล็กน้อย (ระดับ 2)
+              {% elif session.activity_level|string == '3' %}
+                ออกกำลังกายปานกลาง (ระดับ 3)
+              {% elif session.activity_level|string == '4' %}
+                ออกกำลังกายบ่อย (ระดับ 4)
+              {% elif session.activity_level|string == '5' %}
+                ออกกำลังกายหนักมาก (ระดับ 5)
+              {% else %}
+                ไม่ระบุ
+              {% endif %}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <hr class="mt-4">
+
+  <!-- กราฟพลังงาน -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h6 class="mb-3 text-center">พลังงานที่ได้รับและใช้ใน 7 วันที่ผ่านมา</h6>
+      <canvas id="calorieChart" height="120"></canvas>
+    </div>
+  </div>
+
+  <!-- กราฟสารอาหาร -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h6 class="mb-3 text-center">แนวโน้มสารอาหารเทียบเป้าหมาย (7 วัน)</h6>
+      <canvas id="macroChart" height="150"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const days = {{ days|tojson }};
+const eatCal = {{ eat_cal|tojson }};
+const exCal = {{ exercise_cal|tojson }};
+const protein = {{ protein|tojson }};
+const carbs = {{ carbs|tojson }};
+const fat = {{ fat|tojson }};
+const target = {{ target|tojson }};
+
+// ---------- กราฟพลังงาน ----------
+new Chart(document.getElementById('calorieChart'), {
+  type: 'line',
+  data: {
+    labels: days,
+    datasets: [
+      {
+        label: 'พลังงานจากอาหาร (kcal)',
+        data: eatCal,
+        borderColor: 'rgba(54,162,235,1)',
+        backgroundColor: 'rgba(54,162,235,0.1)',
+        tension: 0.3,
+        fill: true
+      },
+      {
+        label: 'พลังงานที่เผาผลาญ (kcal)',
+        data: exCal,
+        borderColor: 'rgba(255,99,132,1)',
+        backgroundColor: 'rgba(255,99,132,0.1)',
+        tension: 0.3,
+        fill: true
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      x: { title: { display: true, text: 'วัน' } },
+      y: { beginAtZero: true, title: { display: true, text: 'กิโลแคลอรี่' } }
+    }
+  }
+});
+
+// ---------- กราฟแท่งสารอาหาร ----------
+new Chart(document.getElementById('macroChart'), {
+  type: 'bar',
+  data: {
+    labels: days,
+    datasets: [
+      {
+        label: 'โปรตีน (g)',
+        data: protein,
+        backgroundColor: 'rgba(54,162,235,0.7)'
+      },
+      {
+        label: 'คาร์โบไฮเดรต (g)',
+        data: carbs,
+        backgroundColor: 'rgba(255,206,86,0.7)'
+      },
+      {
+        label: 'ไขมัน (g)',
+        data: fat,
+        backgroundColor: 'rgba(255,99,132,0.7)'
+      },
+      {
+        label: 'เป้าหมายโปรตีน (g)',
+        data: Array(days.length).fill(target.protein),
+        type: 'line',
+        borderColor: 'rgba(54,162,235,1)',
+        borderDash: [6,3],
+        fill: false,
+        tension: 0.3,
+        yAxisID: 'y'
+      },
+      {
+        label: 'เป้าหมายคาร์บ (g)',
+        data: Array(days.length).fill(target.carb),
+        type: 'line',
+        borderColor: 'rgba(255,206,86,1)',
+        borderDash: [6,3],
+        fill: false,
+        tension: 0.3,
+        yAxisID: 'y'
+      },
+      {
+        label: 'เป้าหมายไขมัน (g)',
+        data: Array(days.length).fill(target.fat),
+        type: 'line',
+        borderColor: 'rgba(255,99,132,1)',
+        borderDash: [6,3],
+        fill: false,
+        tension: 0.3,
+        yAxisID: 'y'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' }
+    },
+    scales: {
+      x: { title: { display: true, text: 'วัน' } },
+      y: { beginAtZero: true, title: { display: true, text: 'กรัมต่อวัน' } }
+    }
+  }
+});
+</script>
+{% endblock %}

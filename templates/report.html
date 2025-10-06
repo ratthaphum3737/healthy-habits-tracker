@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-10">
+    <div class="card">
+      <div class="card-body">
+        <h5>รายงาน</h5>
+        <form method="post" class="row g-2">
+          <div class="col-12 col-md-4">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="mode" value="7days" id="m7" checked>
+              <label class="form-check-label" for="m7">ย้อนหลัง 7 วัน</label>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="mode" value="bydate" id="md">
+              <label class="form-check-label" for="md">เลือกวันที่</label>
+            </div>
+            <input class="form-control mt-1" type="date" name="date_input">
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="mode" value="range" id="mr">
+              <label class="form-check-label" for="mr">ช่วงวันที่</label>
+            </div>
+            <div class="d-flex gap-2 mt-1">
+              <input class="form-control" type="date" name="start_date">
+              <input class="form-control" type="date" name="end_date">
+            </div>
+          </div>
+          <div class="col-12 mt-2"><button class="btn btn-primary" type="submit">ดูรายงาน</button></div>
+        </form>
+
+        {% if title %}
+          <hr>
+          <h6>{{ title }}</h6>
+          {% if rows %}
+            <div class="table-responsive">
+              <table class="table table-sm table-striped">
+                <thead><tr><th>ประเภท</th><th>ชื่อ</th><th>แคลอรี่</th><th>เวลา</th></tr></thead>
+                <tbody>
+                  {% for r in rows %}
+                    <tr><td>{{ r[0] }}</td><td>{{ r[1] }}</td><td>{{ r[2] }}</td><td>{{ r[3] }}</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="text-muted">ไม่พบข้อมูล</p>
+          {% endif %}
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

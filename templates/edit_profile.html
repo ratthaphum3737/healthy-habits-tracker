@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>แก้ไขข้อมูลผู้ใช้</h2>
+  <form method="POST">
+    <div class="mb-3">
+      <label>ชื่อ</label>
+      <input type="text" name="name" class="form-control" value="{{ user[0] }}" required>
+    </div>
+    <div class="mb-3">
+      <label>น้ำหนัก (kg)</label>
+      <input type="number" step="0.1" name="weight" class="form-control" value="{{ user[1] }}" required>
+    </div>
+    <div class="mb-3">
+      <label>ส่วนสูง (cm)</label>
+      <input type="number" step="0.1" name="height" class="form-control" value="{{ user[2] }}" required>
+    </div>
+    <div class="mb-3">
+      <label>อายุ</label>
+      <input type="number" name="age" class="form-control" value="{{ user[3] }}" required>
+    </div>
+    <div class="mb-3">
+      <label>เพศ</label>
+      <select name="gender" class="form-control">
+        <option value="male" {% if user[4]=='male' %}selected{% endif %}>ชาย</option>
+        <option value="female" {% if user[4]=='female' %}selected{% endif %}>หญิง</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label>เป้าหมาย</label>
+      <select name="goal" class="form-control">
+        <option value="Lose" {% if user[5]=='Lose' %}selected{% endif %}>ลดน้ำหนัก</option>
+        <option value="Maintain" {% if user[5]=='Maintain' %}selected{% endif %}>รักษาน้ำหนัก</option>
+        <option value="Gain" {% if user[5]=='Gain' %}selected{% endif %}>เพิ่มน้ำหนัก</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label>ชื่อผู้ใช้</label>
+      <input type="text" name="username" class="form-control" value="{{ user[6] }}" required>
+    </div>
+    <div class="mb-3">
+      <label>ระดับกิจกรรม</label>
+      <select name="activity_level" class="form-control">
+        <option value="1" {% if user[7]=='1' %}selected{% endif %}>นั่งทำงาน</option>
+        <option value="2" {% if user[7]=='2' %}selected{% endif %}>ออกกำลังกายเบาๆ</option>
+        <option value="3" {% if user[7]=='3' %}selected{% endif %}>ออกกำลังกายปานกลาง</option>
+        <option value="4" {% if user[7]=='4' %}selected{% endif %}>ออกกำลังกายหนัก</option>
+        <option value="5" {% if user[7]=='5' %}selected{% endif %}>ออกกำลังกายหนักมาก</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-success">บันทึก</button>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">ยกเลิก</a>
+  </form>
+</div>
+{% endblock %}

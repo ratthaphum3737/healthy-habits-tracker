@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title">ยินดีต้อนรับสู่ Healthy Habits</h3>
+        <p class="card-text">ติดตามอาหารและกิจกรรมของคุณอย่างเป็นระบบ — ลงชื่อเข้าใช้หรือสมัครสมาชิกเพื่อเริ่มต้น</p>
+        <a href="{{ url_for('login') }}" class="btn btn-primary me-2">เข้าสู่ระบบ</a>
+        <a href="{{ url_for('register') }}" class="btn btn-outline-secondary">สมัครสมาชิก</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
