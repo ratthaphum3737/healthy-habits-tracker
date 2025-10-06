@@ -32,21 +32,7 @@ def get_nutrition_info(food_text):
     total_calories = sum(f.get("nf_calories", 0) for f in foods)
     
 
-    print("\n🍱 ข้อมูลโภชนาการ:")
-    for f in foods:
-        print(f"ชื่ออาหาร: {f['food_name'].title()}")
-        print(f"  แคลอรี่: {f['nf_calories']} kcal")
-        print(f"  โปรตีน: {f['nf_protein']} g")
-        print(f"  ไขมัน: {f['nf_total_fat']} g")
-        print(f"  คาร์โบไฮเดรต: {f['nf_total_carbohydrate']} g")
-        print("-" * 40)
 
-    print(f"🍚 รวมทั้งหมด: {total_calories:.0f} kcal | "
-          f"โปรตีน {total_protein:.1f} g | "
-          f"ไขมัน {total_fat:.1f} g | "
-          f"คาร์บ {total_carbs:.1f} g\n")
-
-    # ✅ คืนค่าเป็น dictionary
     return {
         "protein": total_protein,
         "fat": total_fat,
