@@ -4,3 +4,4 @@ python-dotenv
 gunicorn
 mysql-connector-python
 requests
+deep_translator
